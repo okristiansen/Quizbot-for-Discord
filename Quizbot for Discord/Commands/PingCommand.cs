@@ -5,6 +5,7 @@ namespace Quizbot_for_Discord.Commands
 {
     public static class PingCommand
     {
+        // for initial testing of api
         public static async Task RegisterAsync(DiscordSocketClient client, ulong guildId)
         {
             var command = new SlashCommandBuilder()
