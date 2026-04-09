@@ -48,6 +48,8 @@ public class Bot
     async Task ReadyHandler()
     {
         await PingCommand.RegisterAsync(_client, 1485970234971258900); //Custom guild id for testing
+
+        await QuizCommand.RegisterAsync(_client, 1485970234971258900);
     }
 
     async Task SlashCommandHandler(SocketSlashCommand command)
@@ -55,6 +57,11 @@ public class Bot
         if (command.CommandName == "ping")
         {
             await PingCommand.HandleAsync(command);
+        }
+
+        if (command.CommandName == "quiz")
+        {
+            await QuizCommand.HandleAsync(command);
         }
     }
 }

@@ -28,9 +28,10 @@ namespace Quizbot_for_Discord.Commands
                 return;
             }
 
-            // shuffles answers
-            var answers = new List<string>(question.IncorrectAnswers);
-            answers.Add(question.CorrectAnswer);
+            // decode HTML entities and shuffle answers
+            var questionText = System.Net.WebUtility.HtmlDecode(question.Question);
+            var answers = new List<string>(question.IncorrectAnswers.Select(a => System.Net.WebUtility.HtmlDecode(a)));
+            answers.Add(System.Net.WebUtility.HtmlDecode(question.CorrectAnswer));
             answers = answers.OrderBy(_ => Guid.NewGuid()).ToList();
 
             // response
@@ -39,7 +40,7 @@ namespace Quizbot_for_Discord.Commands
 
             var message = $"**Category:** {question.Category}\n" +
                           $"**Difficulty:** {question.Difficulty}\n\n" +
-                          $"{question.Question}\n\n" +
+                          $"{questionText}\n\n" +
                           answerText;
 
             await command.RespondAsync(message);
