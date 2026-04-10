@@ -31,6 +31,8 @@ public class Bot
 
         _client.SlashCommandExecuted += SlashCommandHandler;
 
+        _client.ButtonExecuted += ButtonHandler;
+
         //launch
         await _client.LoginAsync(TokenType.Bot, token);
 
@@ -63,5 +65,13 @@ public class Bot
         {
             await QuizCommand.HandleAsync(command);
         }
+    }
+
+    async Task ButtonHandler(SocketMessageComponent component)
+    {
+        if (component.Data.CustomId == "quiz_correct")
+            await component.RespondAsync("Correct! Well done!");
+        else if (component.Data.CustomId.StartsWith("quiz_wrong"))
+            await component.RespondAsync("Wrong! Better luck next time!");
     }
 }

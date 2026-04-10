@@ -28,22 +28,34 @@ namespace Quizbot_for_Discord.Commands
                 return;
             }
 
-            // decode HTML entities and shuffle answers
+            // decode HTML entities and build answer list with correctness flag
             var questionText = System.Net.WebUtility.HtmlDecode(question.Question);
-            var answers = new List<string>(question.IncorrectAnswers.Select(a => System.Net.WebUtility.HtmlDecode(a)));
-            answers.Add(System.Net.WebUtility.HtmlDecode(question.CorrectAnswer));
-            answers = answers.OrderBy(_ => Guid.NewGuid()).ToList();
+            var answerList = question.IncorrectAnswers
+                .Select(a => (Text: System.Net.WebUtility.HtmlDecode(a), IsCorrect: false))
+                .ToList();
+            answerList.Add((Text: System.Net.WebUtility.HtmlDecode(question.CorrectAnswer), IsCorrect: true));
+            answerList = answerList.OrderBy(_ => Guid.NewGuid()).ToList();
 
-            // response
             var labels = new[] { "A", "B", "C", "D" };
-            var answerText = string.Join("\n", answers.Select((a, i) => $"{labels[i]}) {a}"));
+            var componentBuilder = new ComponentBuilder();
+
+            for (int i = 0; i < answerList.Count; i++)
+            {
+                componentBuilder.WithButton(
+                    label: $"{labels[i]}) {answerList[i].Text}",
+                    customId: answerList[i].IsCorrect ? "quiz_correct" : $"quiz_wrong_{i}",
+                    style: ButtonStyle.Primary);
+            }
 
             var message = $"**Category:** {question.Category}\n" +
                           $"**Difficulty:** {question.Difficulty}\n\n" +
-                          $"{questionText}\n\n" +
-                          answerText;
+                          $"{questionText}";
 
-            await command.RespondAsync(message);
+            await command.RespondAsync(message, components: componentBuilder.Build());
+
+
+
+
         }   
     }
 }
