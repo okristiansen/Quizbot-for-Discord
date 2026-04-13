@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Quizbot_for_Discord.Commands;
+using Quizbot_for_Discord.Services;
 
 public class Bot
 {
@@ -52,6 +53,8 @@ public class Bot
         await PingCommand.RegisterAsync(_client, 1485970234971258900); //Custom guild id for testing
 
         await QuizCommand.RegisterAsync(_client, 1485970234971258900);
+
+        await ScoreCommand.RegisterAsync(_client, 1485970234971258900);
     }
 
     async Task SlashCommandHandler(SocketSlashCommand command)
@@ -65,13 +68,22 @@ public class Bot
         {
             await QuizCommand.HandleAsync(command);
         }
+        if (command.CommandName == "score")
+        {
+            await ScoreCommand.HandleAsync(command);
+        }
     }
 
     async Task ButtonHandler(SocketMessageComponent component)
     {
         if (component.Data.CustomId == "quiz_correct")
+        {
+            ScoreService.AddPoint(component.User.Id);
             await component.RespondAsync("Correct! Well done!");
+        }
         else if (component.Data.CustomId.StartsWith("quiz_wrong"))
+        {
             await component.RespondAsync("Wrong! Better luck next time!");
+        }
     }
 }

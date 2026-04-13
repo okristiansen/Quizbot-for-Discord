@@ -19,12 +19,14 @@ namespace Quizbot_for_Discord.Commands
 
         public static async Task HandleAsync(SocketSlashCommand command)
         {
+            await command.DeferAsync();
+
             var triviaService = new TriviaService();
             var question = await triviaService.GetQuestionAsync();
 
             if (question == null)
             {
-                await command.RespondAsync("Failed to get a question. Try again!");
+                await command.FollowupAsync("Failed to get a question. Try again!");
                 return;
             }
 
@@ -51,7 +53,7 @@ namespace Quizbot_for_Discord.Commands
                           $"**Difficulty:** {question.Difficulty}\n\n" +
                           $"{questionText}";
 
-            await command.RespondAsync(message, components: componentBuilder.Build());
+            await command.FollowupAsync(message, components: componentBuilder.Build());
 
 
 
