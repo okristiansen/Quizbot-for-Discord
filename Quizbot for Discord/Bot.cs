@@ -76,6 +76,8 @@ public class Bot
 
     async Task ButtonHandler(SocketMessageComponent component)
     {
+        HashSet<ulong> answered = new HashSet<ulong>();
+
         if (component.Data.CustomId == "quiz_correct")
         {
             ScoreService.AddPoint(component.User.Id);
@@ -85,5 +87,8 @@ public class Bot
         {
             await component.RespondAsync("Wrong! Better luck next time!");
         }
+
+
+
     }
 }

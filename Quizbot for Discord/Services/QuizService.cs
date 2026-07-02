@@ -8,5 +8,6 @@ namespace Quizbot_for_Discord.Services
 {
     internal class QuizService
     {
+    
     }
 }

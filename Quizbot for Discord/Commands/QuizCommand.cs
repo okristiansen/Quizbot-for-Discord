@@ -14,12 +14,12 @@ namespace Quizbot_for_Discord.Commands
             var command = new SlashCommandBuilder()
                 .WithName("quiz")
                 .WithDescription("get question");
-            await client.Rest.CreateGuildCommand(command.Build(), guildId);
+            await client.Rest.CreateGuildCommand(command.Build(), guildId); //currently for spesific server, change for prod
         }
 
         public static async Task HandleAsync(SocketSlashCommand command)
         {
-            await command.DeferAsync();
+            await command.DeferAsync(); // disc requires 3 sec response, this gives longer time 
 
             var triviaService = new TriviaService();
             var question = await triviaService.GetQuestionAsync();
@@ -36,7 +36,7 @@ namespace Quizbot_for_Discord.Commands
                 .Select(a => (Text: System.Net.WebUtility.HtmlDecode(a), IsCorrect: false))
                 .ToList();
             answerList.Add((Text: System.Net.WebUtility.HtmlDecode(question.CorrectAnswer), IsCorrect: true));
-            answerList = answerList.OrderBy(_ => Guid.NewGuid()).ToList();
+            answerList = answerList.OrderBy(_ => Guid.NewGuid()).ToList(); //shuffle
 
             var labels = new[] { "A", "B", "C", "D" };
             var componentBuilder = new ComponentBuilder();
